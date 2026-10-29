@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Case File Analysis for Litigation Teams | Legalnaut</title>
+<meta name="description" content="Legalnaut reads a whole litigation case file, scans and mailboxes included, and builds the chronology, the contradictions, a proof chart and witness dossiers. Every fact cites its document and page.">
+<link rel="canonical" href="https://legalnaut.github.io/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0f172a">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Legalnaut">
+<meta property="og:title" content="AI Case File Analysis for Litigation Teams | Legalnaut">
+<meta property="og:description" content="Chronology, contradictions, a proof chart and witness dossiers from one upload. Every fact cites its document and page.">
+<meta property="og:url" content="https://legalnaut.github.io/">
+<meta property="og:image" content="https://legalnaut.github.io/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@legalnaut_com">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://legalnaut.com/#organization",
+      "name": "Legalnaut",
+      "url": "https://legalnaut.com/",
+      "logo": "https://legalnaut.github.io/apple-touch-icon.png",
+      "sameAs": [
+        "https://github.com/legalnaut",
+        "https://www.youtube.com/@Legalnaut",
+        "https://x.com/legalnaut_com",
+        "https://vimeo.com/legalnaut"
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Legalnaut",
+      "url": "https://legalnaut.com/",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "A case intelligence workspace for litigation teams: OCR on every page, a chronology built from the documents, contradictions confirmed by a lawyer, a proof chart with its gaps, witness dossiers, deadlines from the rule and a citation check on AI answers and drafts.",
+      "publisher": { "@id": "https://legalnaut.com/#organization" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What files can Legalnaut read?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A ZIP of the whole case file, mailbox exports (.mbox, .pst, .eml, .msg), scanned bundles, chat screenshots and audio recordings. Scans go through OCR and recordings are transcribed." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Legalnaut decide what a document means?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. An AI finding stays a suggestion until a lawyer confirms it, and Legalnaut does not give legal advice or file anything with a court." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Legalnaut have an API or an MCP server?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Both are in development. Their documentation will be published on this page." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --line: #e2e0d8;
+  --accent: #1e3a8a;
+  --accent-text: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1120;
+    --surface: #111a2e;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --line: #1f2a44;
+    --accent: #93c5fd;
+    --accent-text: #0b1120;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1120;
+  --surface: #111a2e;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --line: #1f2a44;
+  --accent: #93c5fd;
+  --accent-text: #0b1120;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.65 Georgia, "Times New Roman", serif;
+}
+.wrap { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+header.top { border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-bottom: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font: 600 18px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .02em; }
+.brand img { width: 28px; height: 28px; }
+nav a { color: var(--muted); font: 15px system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; margin-left: 16px; }
+nav a:hover { color: var(--text); }
+h1, h2, h3 { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: clamp(30px, 6vw, 44px); margin: 56px 0 18px; }
+h2 { font-size: 24px; margin: 56px 0 10px; }
+h3 { font-size: 17px; margin: 0 0 4px; }
+p { margin: 0 0 16px; }
+.lead { font-size: 19px; color: var(--muted); }
+.eyebrow { font: 600 12px/1 system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 8px; }
+.btn { display: inline-block; padding: 12px 18px; border-radius: 6px; font: 600 15px system-ui, sans-serif; text-decoration: none; border: 1px solid var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-text); }
+.btn.ghost { color: var(--accent); }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 36px 0 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
+.card p { margin: 0; font-size: 16px; }
+.items { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 18px; }
+.limits li { margin-bottom: 8px; }
+a { color: var(--accent); }
+footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 24px 0 40px; color: var(--muted); font: 14px/1.6 system-ui, sans-serif; }
+footer a { color: var(--muted); }
+@media (max-width: 520px) { nav { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="https://legalnaut.com/"><img src="apple-touch-icon.png" alt="" width="28" height="28">Legalnaut</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#assistant">AI assistant</a>
+      <a href="https://legalnaut.com/">legalnaut.com</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h1>AI case file analysis for litigation teams</h1>
+  <p class="lead">Legalnaut reads the whole case file, scans and mailboxes included, and gives you the chronology, the contradictions, a proof chart and a dossier for every witness. Each fact cites the document, the page and the quotation it came from.</p>
+
+  <div class="cta">
+    <a class="btn primary" href="https://legalnaut.com/">Open legalnaut.com</a>
+    <a class="btn ghost" href="https://legalnaut.com/features">All features</a>
+  </div>
+
+  <div class="steps">
+    <div class="card"><h3>Upload one archive</h3><p>A ZIP of the file, a mailbox export or a folder of scans.</p></div>
+    <div class="card"><h3>Read in minutes</h3><p>About 100 documents are read, dated and cross-checked in a few minutes.</p></div>
+    <div class="card"><h3>Every line has a source</h3><p>One click opens the document on the cited page with the passage highlighted.</p></div>
+  </div>
+
+  <section id="features">
+
+    <h2>Read the file once</h2>
+    <p>Every page goes in once and nothing is analysed twice.</p>
+    <div class="items">
+      <div class="card"><h3>Archives and mailboxes</h3><p>Upload a ZIP, an .mbox, .pst, .eml or .msg export, or forward mail to the matter's address. Each message is filed with its thread, and each attachment becomes its own document.</p></div>
+      <div class="card"><h3>OCR to the last page</h3><p>Scanned bundles are read in full. A document with average OCR confidence below 70% gets a badge, so you check its quotations against the scan.</p></div>
+      <div class="card"><h3>Chats and recordings</h3><p>WhatsApp and Messenger screenshots become transcripts of who wrote what and when. Hearings and voice messages are transcribed into searchable text.</p></div>
+      <div class="card"><h3>E-mail and photo checks</h3><p>E-mails are checked against their DKIM signature and received chain, photographs against their EXIF data. Each check reports verified, failed or unavailable.</p></div>
+    </div>
+
+    <h2>Know what happened</h2>
+    <p>Dates, people and events from every document land on one timeline.</p>
+    <div class="items">
+      <div class="card"><h3>A chronology from the documents</h3><p>A pleading that describes twelve dated events puts twelve entries on the timeline, each with its quotation. The export flags every gap of ninety days or more.</p></div>
+      <div class="card"><h3>Who said what about whom</h3><p>A profile for every person and organisation: their statements, what others said about them, the documents they wrote and the events they took part in.</p></div>
+      <div class="card"><h3>Correspondence, measured</h3><p>Who wrote to whom, how often, how long replies took and the longest silences, counted from the mail headers.</p></div>
+      <div class="card"><h3>Every sum, with its page</h3><p>Maintenance, wages, invoices, claimed and awarded amounts go into one table with payer, payee and date, and export to XLSX.</p></div>
+    </div>
+
+    <h2>Find where the accounts disagree</h2>
+    <p>Statements are split into claims, and every claim is checked against the rest of the file.</p>
+    <div class="items">
+      <div class="card"><h3>Two quotations side by side</h3><p>A contradiction shows both quotations with their documents and pages and a sentence on why they conflict.</p></div>
+      <div class="card"><h3>A lawyer confirms</h3><p>Each pair is a suggestion until you confirm or dismiss it. A dismissed pair never returns.</p></div>
+      <div class="card"><h3>No self-corroboration</h3><p>A later letter from the same author does not count as confirming their earlier claim.</p></div>
+      <div class="card"><h3>The case against you</h3><p>Devil's advocate writes the strongest opposing argument from your own matter: the weak exhibits and the contradictions that hurt.</p></div>
+    </div>
+
+    <h2>Prove it</h2>
+    <p>From issue to exhibit to gap on one chart, and every draft checked against the file.</p>
+    <div class="items">
+      <div class="card"><h3>The proof chart</h3><p>Each issue you must establish sits next to the exhibits that carry it. An issue with nothing behind it is marked as a gap.</p></div>
+      <div class="card"><h3>Evidence found as the file grows</h3><p>Every new document is weighed against every open issue, and each match waits under its issue with the quotation and page.</p></div>
+      <div class="card"><h3>Citation check</h3><p>Before you see a draft or a chat answer, Legalnaut confirms the cited document and page exist and the quotation is really there. Anything else is reported.</p></div>
+      <div class="card"><h3>Bundles and exports</h3><p>An evidence bundle as one PDF with index, bookmarks and a sha256 annex. A chronology and statement of facts as DOCX, with fixed exhibit numbers.</p></div>
+    </div>
+
+    <h2>Prepare the hearing</h2>
+    <div class="items">
+      <div class="card"><h3>Witness dossier</h3><p>Everything the file holds on one person, including the statements the records contradict, each line with document, page and quotation.</p></div>
+      <div class="card"><h3>Examination outline</h3><p>Facts that help, facts that hurt, an impeachment sequence for each inconsistency, and the questions the file cannot answer.</p></div>
+      <div class="card"><h3>Deadlines from the rule</h3><p>Time limits computed from the provision and the date they run from, with the arithmetic written out and a reminder before each one.</p></div>
+      <div class="card"><h3>Matter briefing</h3><p>Posture, what changed, next steps, gaps and risks, written from the matter's own material.</p></div>
+    </div>
+
+  </section>
+
+  <section id="assistant">
+    <h2>An AI assistant that reads before it answers</h2>
+    <p>Ask about your case in plain words. The assistant searches the file, opens the documents and reads them in full, then answers with a citation on every source.</p>
+    <div class="items">
+      <div class="card"><h3>Four ways to search</h3><p>Full text with filters, search by meaning across languages, the text of scans and recordings, and documents your team added later.</p></div>
+      <div class="card"><h3>Counts from the database</h3><p>A question that needs a number runs a read-only query on the case tables, so no model guesses a total.</p></div>
+    </div>
+  </section>
+
+  <h2>Your team and your client in one file</h2>
+  <p>Invite colleagues and clients by e-mail, on every plan, with no limit on users. The interface runs in English, Polish, German, French, Spanish, Italian, Portuguese, Dutch and Ukrainian. Evidence stays in its original language, and every view, download and export goes into an audit log.</p>
+
+  <h2>What Legalnaut will not do</h2>
+  <ul class="limits">
+    <li>It does not give legal advice or decide what a document means.</li>
+    <li>It does not file anything with a court.</li>
+    <li>It is not an e-discovery platform: there is no privilege review.</li>
+  </ul>
+
+  <h2>Try it on a real case</h2>
+  <p>The <a href="https://legalnaut.com/demo">live demo</a> holds a public case file with its filings already read. It needs no account and no card.</p>
+
+  <p class="eyebrow" style="margin-top:48px">For developers</p>
+  <p>A REST API and an MCP server for Legalnaut are in development. Their documentation will be published on this page.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><a href="https://legalnaut.com/">Legalnaut</a> · <a href="https://legalnaut.com/features">Features</a> · <a href="https://legalnaut.com/pricing">Pricing</a> · <a href="https://legalnaut.com/security">Security</a> · <a href="https://legalnaut.com/blog">Blog</a></p>
+    <p><a href="https://www.youtube.com/@Legalnaut">YouTube</a> · <a href="https://x.com/legalnaut_com">X</a> · <a href="https://vimeo.com/legalnaut">Vimeo</a> · <a href="https://github.com/legalnaut">GitHub</a></p>
+    <p>© 2026 Legalnaut</p>
+  </div>
+</footer>
+
+</body>
+</html>
